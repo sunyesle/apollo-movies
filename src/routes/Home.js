@@ -9,6 +9,7 @@ const GET_MOVEIS = gql`
     movies {
       id
       medium_cover_image
+      isLiked @client
     }
   }
 `;
@@ -58,7 +59,7 @@ const Movies = styled.div`
 `;
 
 export default () => {
-  const { loading, error, data } = useQuery(GET_MOVEIS);
+  const { loading, data } = useQuery(GET_MOVEIS);
   return (
     <Container>
       <Header>
@@ -69,7 +70,12 @@ export default () => {
       {!loading && data.movies && (
         <Movies>
           {data.movies.map((m) => (
-            <Movie key={m.id} id={m.id} bg={m.medium_cover_image} />
+            <Movie
+              key={m.id}
+              id={m.id}
+              bg={m.medium_cover_image}
+              isLiked={m.isLiked}
+            />
           ))}
         </Movies>
       )}
