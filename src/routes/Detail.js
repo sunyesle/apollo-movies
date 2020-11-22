@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import styled from 'styled-components';
+import Suggestion from '../components/Suggestion';
 
 // query getMovie($id: Int)  Apollo를 위한 부분
 // Apollo가 변수의 type을 검사하도록 도와줌
@@ -16,6 +17,11 @@ const GET_MOVIE = gql`
       language
       rating
       description_intro
+    }
+    suggestions(id: $id) {
+      id
+      title
+      medium_cover_image
     }
   }
 `;
@@ -32,11 +38,13 @@ const Container = styled.div`
 
 const Column = styled.div`
   margin-left: 10px;
+  width: 50%;
 `;
 
 const Title = styled.h1`
   font-size: 50px;
   margin-bottom: 15px;
+  font-weight: 600;
 `;
 
 const Subtitle = styled.h4`
@@ -45,13 +53,25 @@ const Subtitle = styled.h4`
 `;
 
 const Description = styled.p`
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: 100;
 `;
 
 const Poster = styled.div`
   width: 25%;
   height: 60%;
-  background-color: transparent;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-radius: 14px;
+  background-image: url(${(props) => props.bg});
+  background-size: cover;
+  background-position: center center;
+`;
+
+const Suggestions = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 25px;
+  width: 100%;
 `;
 
 export default () => {
@@ -62,11 +82,32 @@ export default () => {
   return (
     <Container>
       <Column>
-        <Title>Title</Title>
-        <Subtitle>Subtitle</Subtitle>
-        <Description>Description</Description>
+        <Title>{loading ? 'Loading...' : data.movie.title}</Title>
+        <Subtitle>
+          {data?.movie?.language}
+          {data && ' · '}
+          {data?.movie?.rating}
+        </Subtitle>
+        <Description>{data?.movie?.description_intro}</Description>
+        <br />
+        <br />
+        {data && (
+          <>
+            <Subtitle>Suggestions</Subtitle>
+            <Suggestions>
+              {data.suggestions.map((m) => (
+                <Suggestion
+                  key={m.id}
+                  id={m.id}
+                  bg={m.medium_cover_image}
+                  title={m.title}
+                />
+              ))}
+            </Suggestions>
+          </>
+        )}
       </Column>
-      <Poster></Poster>
+      <Poster bg={data?.movie?.medium_cover_image}></Poster>
     </Container>
   );
 };
