@@ -21,7 +21,7 @@ const Container = styled.div`
 `;
 
 const Header = styled.header`
-  background-image: linear-gradient(-45deg, #a1c4fd, #c2e9fb);
+  background-image: linear-gradient(-45deg, #96deda, #50c9c3);
   height: 45vh;
   color: white;
   display: flex;
@@ -48,6 +48,15 @@ const Loading = styled.div`
   margin-top: 10px;
 `;
 
+const Movies = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 25px;
+  width: 60%;
+  position: relative;
+  top: -50px;
+`;
+
 export default () => {
   const { loading, error, data } = useQuery(GET_MOVEIS);
   return (
@@ -57,9 +66,13 @@ export default () => {
         <Subtitle>I love GraphQL</Subtitle>
       </Header>
       {loading && <Loading>Loading</Loading>}
-      {!loading &&
-        data.movies &&
-        data.movies.map((m) => <Movie key={m.id} id={m.id} />)}
+      {!loading && data.movies && (
+        <Movies>
+          {data.movies.map((m) => (
+            <Movie key={m.id} id={m.id} bg={m.medium_cover_image} />
+          ))}
+        </Movies>
+      )}
     </Container>
   );
 };
